@@ -1,10 +1,9 @@
 package com.itkpi.java.contest.cities.solution;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Solver
-{
+public class Solver {
     /**
      * This method should order cities names (strings) from allCitiesList argument
      * into longest chain possible following the rules of the "Cities game".
@@ -26,9 +25,40 @@ public class Solver
      * <b>Additional requirements:</b>
      * Time limit is 2 minutes
      */
-    public List<String> solveCitiesGame(List<String> allCitiesList)
-    {
-        // TODO: implement this
-        return Collections.emptyList();
+    public List<String> solveCitiesGame(List<String> allCitiesList) {
+        List<String> input = new ArrayList<String>(allCitiesList);
+        List<String> output = new ArrayList<String>();
+
+        output.add(input.get(0));
+        input.remove(0);
+
+        while (!input.isEmpty()) {
+            String lastCity = output.get(output.size() - 1);
+
+            String city = getCity(input, getLastCharacter(lastCity));
+
+            if (city.equals("")) {
+                output.remove(output.size() - 1);
+            } else {
+                output.add(city);
+                input.remove(city);
+            }
+        }
+        return output;
+    }
+
+    private char getLastCharacter(String word) {
+        return word.charAt(word.length() - 1);
+    }
+
+    private String getCity(List<String> cityList, Character character) {
+        String finalCity = "";
+        for (String city : cityList) {
+            if (city.startsWith(character.toString().toUpperCase())) {
+                finalCity = city;
+                break;
+            }
+        }
+        return finalCity;
     }
 }
