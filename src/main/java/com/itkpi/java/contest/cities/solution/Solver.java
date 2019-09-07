@@ -1,6 +1,8 @@
 package com.itkpi.java.contest.cities.solution;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Solver {
@@ -26,19 +28,19 @@ public class Solver {
      * Time limit is 2 minutes
      */
     public List<String> solveCitiesGame(List<String> allCitiesList) {
-        List<String> input = new ArrayList<String>(allCitiesList);
-        List<String> output = new ArrayList<String>();
+        List<String> input = new ArrayList<>(allCitiesList);
+        ListExtended<String> output = new ListExtended<>();
 
         output.add(input.get(0));
         input.remove(0);
 
         while (!input.isEmpty()) {
-            String lastCity = output.get(output.size() - 1);
+            String lastCity = output.getLast();
 
             String city = getCity(input, getLastCharacter(lastCity));
 
             if (city.equals("")) {
-                output.remove(output.size() - 1);
+                output.removeLast();
             } else {
                 output.add(city);
                 input.remove(city);
