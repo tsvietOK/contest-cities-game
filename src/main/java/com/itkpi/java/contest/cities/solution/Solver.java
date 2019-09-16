@@ -27,7 +27,7 @@ public class Solver {
     public List<String> solveCitiesGame(List<String> allCitiesList) {
         List<String> input = new ArrayList<>(allCitiesList);
         LinkedList<String> output = new LinkedList<>();
-
+        LinkedList<String> unused = new LinkedList<>();
 
         output.add(input.get(0));
         input.remove(0);
@@ -35,14 +35,26 @@ public class Solver {
         while (!input.isEmpty()) {
             String lastCity = output.getLast();
 
-            String city = getCity(input, getLastCharacter(lastCity));
+            String city = getCityStartsWith(input, getLastCharacter(lastCity));
 
-            if (city.equals("")) {
-                output.removeLast();
-            } else {
+            if (!city.equals("")) {
                 output.add(city);
                 input.remove(city);
+            } else {
+                unused.add(lastCity);
+                output.removeLast();
             }
+        }
+        //reversed
+        while (!unused.isEmpty()) {
+            String firstCity = output.getFirst();
+
+            String reversedCity = getCityEndsWith(unused, getFirstCharacter(firstCity));
+
+            if (!reversedCity.equals("")) {
+                output.addFirst(reversedCity);
+                unused.remove(reversedCity);
+            } else break;
         }
         return output;
     }
@@ -51,10 +63,25 @@ public class Solver {
         return word.charAt(word.length() - 1);
     }
 
-    private String getCity(List<String> cityList, Character character) {
+    private char getFirstCharacter(String word) {
+        return word.charAt(0);
+    }
+
+    private String getCityEndsWith(List<String> cityList, Character firstCharacter) {
         String finalCity = "";
         for (String city : cityList) {
-            if (city.startsWith(character.toString().toUpperCase())) {
+            if (city.endsWith(firstCharacter.toString().toLowerCase())) {
+                finalCity = city;
+                break;
+            }
+        }
+        return finalCity;
+    }
+
+    private String getCityStartsWith(List<String> cityList, Character lastCharacter) {
+        String finalCity = "";
+        for (String city : cityList) {
+            if (city.startsWith(lastCharacter.toString().toUpperCase())) {
                 finalCity = city;
                 break;
             }
