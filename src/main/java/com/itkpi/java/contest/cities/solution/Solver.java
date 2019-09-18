@@ -1,6 +1,10 @@
 package com.itkpi.java.contest.cities.solution;
 
-import java.util.*;
+import com.itkpi.java.contest.cities.utils.StringUtils;
+
+import java.util.LinkedList;
+import java.util.List;
+
 
 public class Solver {
     /**
@@ -25,17 +29,19 @@ public class Solver {
      * Time limit is 2 minutes
      */
     public List<String> solveCitiesGame(List<String> allCitiesList) {
-        List<String> input = new ArrayList<>(allCitiesList);
+        LinkedList<String> input = new LinkedList<>(allCitiesList);
         LinkedList<String> output = new LinkedList<>();
         LinkedList<String> unused = new LinkedList<>();
+        LinkedList<String> finalOutput = new LinkedList<>();
 
-        output.add(input.get(0));
-        input.remove(0);
+        output.add(input.getFirst());
+        input.removeFirst();
+
+        int maxScore = 0;
 
         while (!input.isEmpty()) {
             String lastCity = output.getLast();
-
-            String city = getCityStartsWith(input, getLastCharacter(lastCity));
+            String city = getCityStartsWith(input, StringUtils.getLastCharacter(lastCity));
 
             if (!city.equals("")) {
                 output.add(city);
@@ -44,48 +50,48 @@ public class Solver {
                 unused.add(lastCity);
                 output.removeLast();
             }
-        }
-        //reversed
-        while (!unused.isEmpty()) {
+            //reversed
             String firstCity = output.getFirst();
-
-            String reversedCity = getCityEndsWith(unused, getFirstCharacter(firstCity));
+            String reversedCity = getCityEndsWith(unused, StringUtils.getFirstCharacter(firstCity));
 
             if (!reversedCity.equals("")) {
                 output.addFirst(reversedCity);
                 unused.remove(reversedCity);
-            } else break;
+            } else {
+                unused.add(firstCity);
+                output.removeFirst();
+            }
+
+            int score = getScore(output);
+            if (score > maxScore) {
+                maxScore = score;
+                finalOutput = new LinkedList<>(output);
+            }
         }
-        return output;
+        return finalOutput;
     }
 
-    private char getLastCharacter(String word) {
-        return word.charAt(word.length() - 1);
-    }
-
-    private char getFirstCharacter(String word) {
-        return word.charAt(0);
-    }
-
-    private String getCityEndsWith(List<String> cityList, Character firstCharacter) {
+    private String getCityEndsWith(List<String> cityList, Character character) {
         String finalCity = "";
         for (String city : cityList) {
-            if (city.endsWith(firstCharacter.toString().toLowerCase())) {
+            if (city.endsWith(character.toString().toLowerCase()) && city.length() >= finalCity.length()) {
                 finalCity = city;
-                break;
             }
         }
         return finalCity;
     }
 
-    private String getCityStartsWith(List<String> cityList, Character lastCharacter) {
+    private String getCityStartsWith(List<String> cityList, Character character) {
         String finalCity = "";
         for (String city : cityList) {
-            if (city.startsWith(lastCharacter.toString().toUpperCase())) {
+            if (city.startsWith(character.toString().toUpperCase()) && city.length() >= finalCity.length()) {
                 finalCity = city;
-                break;
             }
         }
         return finalCity;
+    }
+
+    private int getScore(LinkedList<String> list) {
+        return list.stream().mapToInt(String::length).sum();
     }
 }
